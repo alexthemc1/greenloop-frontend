@@ -39,3 +39,4 @@ jobs:
           local-dir: ./dist/
           server-dir: ./public_html/greenloop/
           dangerous-clean-slate: false
+        
