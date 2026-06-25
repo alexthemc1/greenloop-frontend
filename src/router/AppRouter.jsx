@@ -28,7 +28,7 @@ import AdminRoute from "./AdminRoute";
 
 export default function AppRouter() {
   return (
-    <BrowserRouter>
+    <BrowserRouter basename="/greenloop">
       <ScrollToTop />
       <Routes>
 
@@ -75,12 +75,12 @@ export default function AppRouter() {
           }
         >
           <Route index element={<DashboardPage />} />
-          <Route path="products"  element={<ProductsAdminPage />}  />
-          <Route path="products/"  element={<ProductsAdminPage />}  />
+          <Route path="products" element={<ProductsAdminPage />} />
+          <Route path="products/" element={<ProductsAdminPage />} />
           <Route path="/admin/produits/ajouter" element={<ProductsAddAdminPage />} />
           <Route path="/admin/products/:id" element={<ProductsEditAdminPage />} />
           <Route path="users" element={<UsersAdminPage />} />
-          <Route  path="/admin/users/:id/edit"  element={<UsersEditAdminPage />} />
+          <Route path="/admin/users/:id/edit" element={<UsersEditAdminPage />} />
           <Route path="commentaires" element={<CommentairesAdminPage />} />
           <Route path="commentaires/:id" element={<CommentEditPage />} />
         </Route>
