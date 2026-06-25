@@ -33,6 +33,15 @@ jobs:
           password: ${{ secrets.SFTP_PASSWORD }}
           port: 21
           protocol: ftps
+
+          # IMPORTANT: Vite build folder
           local-dir: ./dist/
-          server-dir: ./public_html/
-          dangerous-clean-slate: true
+
+          # IMPORTANT: folder dédié
+          server-dir: /public_html/greenloop/
+
+          dangerous-clean-slate: false
+
+          exclude: |
+            **/.git*
+            **/.github*
