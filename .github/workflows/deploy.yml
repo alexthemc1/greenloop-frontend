@@ -1,4 +1,4 @@
-name: Debug Symfony Deploy
+name: Deploy Vite to o2switch
 
 on:
   push:
@@ -6,32 +6,26 @@ on:
       - main
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      - name: Setup Node
+        uses: actions/setup-node@v4
         with:
-          php-version: 8.3
-          tools: composer
+          node-version: 20
+          cache: npm
 
-      - name: Show PHP version
-        run: php -v
+      - name: Install dependencies
+        run: npm ci
 
-      - name: Show Composer version
-        run: composer -V
+      - name: Build project
+        run: npm run build
 
-      - name: Install dependencies (DEBUG)
-        run: composer install -vvv
-
-      - name: List files
-        run: ls -la
-
-      - name: FTP Deploy (only if previous success)
+      - name: Deploy via FTPS
         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
         with:
           server: ${{ secrets.SFTP_SERVER }}
@@ -39,6 +33,6 @@ jobs:
           password: ${{ secrets.SFTP_PASSWORD }}
           port: 21
           protocol: ftps
-          local-dir: ./
-          server-dir: /public_html/greenloop-backend/
-          dangerous-clean-slate: false
+          local-dir: ./dist/
+          server-dir: ./public_html/
+          dangerous-clean-slate: true
