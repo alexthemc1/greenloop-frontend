@@ -1,0 +1,46 @@
+:root {
+
+  --color-primary: #3F9759;   
+  --color-primary-dark: #15803d;
+  --color-secondary: #FFCA37;
+  --color-bg: #f9fafb;
+  --color-dark: #111827;
+
+  --text-primary: #111827;
+  --text-secondary: #ffffff;
+  --text-muted: #6b7280;
+
+  --border-light: #e5e7eb;
+
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 18px;
+
+}
+.layer {
+  transition: transform 0.1s linear;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+
+  padding: 0.6rem 1.2rem;
+  border-radius: 9999px;
+
+  background-color: var(--color-primary);
+  color: #fff;
+
+  font-weight: 600;
+  font-size: 0.95rem;
+  line-height: 1;
+
+  border: none;
+  cursor: pointer;
+
+  transition: all 0.2s ease-in-out;
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}

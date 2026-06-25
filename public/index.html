@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Parallax GREENLOOP</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    .parallax {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .left {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 50%;
+      color: #333;
+      font-family: Arial, sans-serif;
+      text-align: center;
+    }
+
+    .right {
+      position: relative;
+      width: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .layer {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      will-change: transform;
+      pointer-events: none;
+      height: 90vh;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="parallax" id="parallax">
+    <div class="left">
+      <p> Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptatum, similique. Sequi sit nemo eum totam dicta
+        recusandae nulla quos! Vero itaque quos eveniet laborum quia alias aliquam necessitatibus recusandae?
+        Asperiores, in! Atque, ipsa.
+        Soluta beatae nemo quia tempore eius assumenda quas, tenetur sapiente. Quod illo maiores quibusdam quam
+        explicabo culpa deserunt, doloremque veniam quasi tempora? Molestiae ad cumque perspiciatis quisquam quis
+        voluptate! Velit omnis, dolorem incidunt esse quod quam fuga.</p>
+    </div>
+    <div class="right">
+      <img src="épinards.png" class="layer" data-speed="6">
+      <img src="franboise.png" class="layer" data-speed="12">
+      <img src="ananas.png" class="layer" data-speed="20">
+    </div>
+  </div>
+
+  <script>
+    // Désactiver sur mobile
+    if (window.innerWidth < 768) {
+    } else {
+
+      const parallax = document.getElementById('parallax');
+      const layers = document.querySelectorAll('.layer');
+
+      parallax.addEventListener('mousemove', (e) => {
+        const rect = parallax.getBoundingClientRect();
+        const x = (e.clientX - rect.left) / rect.width - 0.5;
+        const y = (e.clientY - rect.top) / rect.height - 0.5;
+
+        layers.forEach(layer => {
+          const speed = layer.dataset.speed;
+          layer.style.transform = `
+            translate(-50%, -50%)
+            translate(${x * speed}px, ${y * speed}px)
+          `;
+        });
+      });
+    }
+  </script>
+
+</body>
+
+</html>
