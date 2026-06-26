@@ -1,3 +1,45 @@
+# name: Deploy Vite to o2switch
+
+# on:
+#   push:
+#     branches:
+#       - main
+
+# env:
+#   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+# jobs:
+#   build-and-deploy:
+#     runs-on: ubuntu-latest
+
+#     steps:
+#       - name: Checkout code
+#         uses: actions/checkout@v4
+
+#       - name: Setup Node
+#         uses: actions/setup-node@v4
+#         with:
+#           node-version: 24
+#           cache: npm
+
+#       - name: Install dependencies
+#         run: npm ci
+
+#       - name: Build project
+#         run: npm run build
+
+#       - name: Deploy via FTPS
+#         uses: SamKirkland/FTP-Deploy-Action@v4.3.5
+#         with:
+#           server: ${{ secrets.SFTP_SERVER }}
+#           username: ${{ secrets.SFTP_USERNAME }}
+#           password: ${{ secrets.SFTP_PASSWORD }}
+#           port: 21
+#           protocol: ftps
+#           local-dir: ./dist/
+#           server-dir: ./public_html/greenloop/
+#           dangerous-clean-slate: false
+
 name: Deploy Vite to o2switch
 
 on:
