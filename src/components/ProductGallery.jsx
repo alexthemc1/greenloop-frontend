@@ -5,32 +5,32 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/thumbs";
 
+import { API_BASE_URL } from "../config/api";
+
 export default function ProductGallery({ images = [] }) {
   const [miniaturesSwiper, setMiniaturesSwiper] = useState(null);
 
-const ImageNotFound = '/ImageNotFound.webp'
+  const ImageNotFound = "/ImageNotFound.webp";
 
-const sortedImages = [...images].sort((a, b) => {
+  const sortedImages = [...images].sort((a, b) => {
+    const order = {
+      main: 1,
+      gallery: 2,
+      info: 3
+    };
 
-  const order = {
-    main: 1,
-    gallery: 2,
-    info: 3
-  };
+    return order[a.typeImage] - order[b.typeImage];
+  });
 
-  return order[a.typeImage] - order[b.typeImage];
-
-});
-
-const imagesFormat =
-  sortedImages.length > 0
-    ? sortedImages.map((img) =>
-        img?.imagePath
-          ? `http://127.0.0.1:8000${img.imagePath}`
-          : ImageNotFound
-      )
-    : [ImageNotFound];
-
+  const imagesFormat =
+    sortedImages.length > 0
+      ? sortedImages.map((img) =>
+          img?.imagePath
+            ? `${API_BASE_URL}${img.imagePath}`
+            : ImageNotFound
+        )
+      : [ImageNotFound];
+      
   return (
     <div className="w-full flex flex-col md:h-full md:gap-6">
       <div className="flex-1">

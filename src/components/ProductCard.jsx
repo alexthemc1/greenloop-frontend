@@ -1,6 +1,8 @@
+import { Link } from "react-router-dom";
+import { API_BASE_URL } from "../config/api";
+
 const SEVEN_DAYS_MS = 7 * 24 * 60 * 60 * 1000;
 const limitDate = new Date(Date.now() - SEVEN_DAYS_MS);
-import { Link } from "react-router-dom";
 
 export default function ProductCard({ product }) {
   const price = Number(product.price);
@@ -44,8 +46,8 @@ export default function ProductCard({ product }) {
   const ImageNotFound = '/ImageNotFound.webp'
 
 
-  const imageUrl = mainImage?.imagePath
-    ? `http://127.0.0.1:8000${mainImage.imagePath}`
+const imageUrl = mainImage?.imagePath
+    ? `${API_BASE_URL}${mainImage.imagePath}`
     : ImageNotFound;
 
   return (

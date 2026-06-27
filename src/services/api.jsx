@@ -1,14 +1,7 @@
-import axios from "axios";
 import { jwtDecode } from "jwt-decode";
+import { api } from "../config/api";
 
-const API_URL = "http://localhost:8000/api";
-
-const api = axios.create({
-  baseURL: API_URL,
-  headers: {
-    "Content-Type": "application/json",
-  },
-});
+const client = api;
 
 export function setupAxios() {
   const token = localStorage.getItem("authToken");
@@ -18,7 +11,7 @@ export function setupAxios() {
       const jwtData = jwtDecode(token);
 
       if (jwtData.exp * 1000 > Date.now()) {
-        api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+        client.defaults.headers.common["Authorization"] = `Bearer ${token}`;
       } else {
         localStorage.removeItem("authToken");
       }
@@ -28,7 +21,7 @@ export function setupAxios() {
   }
 }
 
-api.interceptors.request.use((config) => {
+client.interceptors.request.use((config) => {
   const token = localStorage.getItem("authToken");
 
   if (token) {
@@ -48,16 +41,16 @@ api.interceptors.request.use((config) => {
   return config;
 });
 
-api.interceptors.response.use(
+client.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
       localStorage.removeItem("authToken");
-      delete api.defaults.headers.common["Authorization"];
+      delete client.defaults.headers.common["Authorization"];
     }
 
     return Promise.reject(error);
   }
 );
 
-export default api;
+export default client;

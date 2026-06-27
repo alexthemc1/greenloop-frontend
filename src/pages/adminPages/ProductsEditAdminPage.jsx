@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-
+import { api } from "../../services/api";
 import ProductAdminApi from "../../services/ProductAdminApi";
 import AdminButton from "../../components/button/AdminButton";
 
@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 export default function ProductsEditAdminPage() {
   const { id } = useParams();
 
+  const API_BASE_URL = api.defaults.baseURL;
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
@@ -566,7 +567,7 @@ export default function ProductsEditAdminPage() {
                 className="flex items-center gap-4 border rounded-lg p-3"
               >
                 <img
-                  src={`http://localhost:8000${image.imagePath}`}
+                  src={`${API_BASE_URL}${image.imagePath}`}
                   alt=""
                   className="w-20 h-20 object-cover rounded"
                 />

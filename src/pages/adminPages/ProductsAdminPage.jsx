@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import api from "../../services/api";
+import { api } from "../../services/api";
 import { Navigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import ProductAdminApi from "../../services/ProductAdminApi";
@@ -21,7 +21,7 @@ export default function ProduitsAdminPage() {
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
 
-  const API_BASE = "http://localhost:8000";
+  const API_BASE_URL = api.defaults.baseURL;
 
   const fetchProducts = async (pageNumber = 1) => {
     setLoading(true);
@@ -121,8 +121,8 @@ export default function ProduitsAdminPage() {
               <img
                 src={
                   mainImage?.imagePath
-                    ? `http://127.0.0.1:8000${mainImage.imagePath}`
-                    : "/placeholder-product.jpg"
+                    ? `${API_BASE_URL}${mainImage.imagePath}`
+                    : "/ImageNotFound.webp"
                 }
                 className="w-full h-full object-cover"
               />
@@ -204,8 +204,8 @@ export default function ProduitsAdminPage() {
                 <img
                   src={
                     mainImage?.imagePath
-                      ? `http://127.0.0.1:8000${mainImage.imagePath}`
-                      : "/placeholder-product.jpg"
+                      ? `${API_BASE_URL}${mainImage.imagePath}`
+                      : "/ImageNotFound.webp"
                   }
                   className="w-16 h-16 rounded object-cover"
                 />
