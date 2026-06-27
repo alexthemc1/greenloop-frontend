@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import api  from "../../services/api";
+import { API_BASE_URL } from "../../config/api";
 import ProductAdminApi from "../../services/ProductAdminApi";
 import AdminButton from "../../components/button/AdminButton";
 
@@ -9,7 +9,6 @@ import { toast } from "react-toastify";
 export default function ProductsEditAdminPage() {
   const { id } = useParams();
 
-  const API_BASE_URL = api.defaults.baseURL;
   const navigate = useNavigate();
 
   const [loading, setLoading] = useState(true);
