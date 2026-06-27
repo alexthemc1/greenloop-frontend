@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
+import { api } from "../config/api";
 import WhishListBanner from "../components/Banners/WhishListBanner";
 import wishlistAPI from "../api/wishlistAPI";
 import cartAPI from "../api/cartAPI";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { STATIC_BASE_URL } from "../config/api";
+
+const API_BASE_URL = api.defaults.baseURL;
 
 const WhishListPage = () => {
   const [wishlist, setWishlist] = useState([]);
@@ -91,7 +94,7 @@ const WhishListPage = () => {
                   <div className="flex gap-3 items-center">
                     <div className="w-20 h-20 rounded-md overflow-hidden bg-gray-100">
                       <img
-                        src={`${STATIC_BASE_URL}${product.images?.[0]?.imagePath}`}
+                        src={`${API_BASE_URL}${product.images?.[0]?.imagePath}`}
                         alt={product.name}
                       />
                     </div>
@@ -201,7 +204,7 @@ const WhishListPage = () => {
                 <div key={item.id} className="md:hidden flex items-center flex-col bg-white rounded-xl shadow-md p-4 gap-3 relative">
                   <div className="w-50 h-50 overflow-hidden rounded-md bg-gray-100">
                     <img
-                     src={`${STATIC_BASE_URL}${product.images?.[0]?.imagePath}`}
+                      src={`${API_BASE_URL}${product.images?.[0]?.imagePath}`}
                       alt={product.name}
                       className="object-cover w-full h-full"
                     />
