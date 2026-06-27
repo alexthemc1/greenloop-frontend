@@ -1,11 +1,11 @@
 import { useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Thumbs } from "swiper/modules";
+import { API_BASE_URL } from "../config/api";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/thumbs";
 
-import { API_BASE_URL } from "../config/api";
 
 export default function ProductGallery({ images = [] }) {
   const [miniaturesSwiper, setMiniaturesSwiper] = useState(null);
@@ -30,7 +30,7 @@ export default function ProductGallery({ images = [] }) {
             : ImageNotFound
         )
       : [ImageNotFound];
-      
+
   return (
     <div className="w-full flex flex-col md:h-full md:gap-6">
       <div className="flex-1">
