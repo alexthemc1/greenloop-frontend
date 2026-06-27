@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
-import { api } from "../config/api";
 import WhishListBanner from "../components/Banners/WhishListBanner";
 import wishlistAPI from "../api/wishlistAPI";
 import cartAPI from "../api/cartAPI";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-
-const API_BASE_URL = api.defaults.baseURL;
+import { API_BASE_URL } from "../config/api";
 
 const WhishListPage = () => {
   const [wishlist, setWishlist] = useState([]);
