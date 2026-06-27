@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
-import  api  from "../../services/api";
-import { Navigate } from "react-router-dom";
+import { API_BASE_URL } from "../../config/api";
+import api from "../../services/api";import { Navigate } from "react-router-dom";
 import { Link } from "react-router-dom";
 import ProductAdminApi from "../../services/ProductAdminApi";
 import { toast } from "react-toastify";
@@ -20,8 +20,6 @@ export default function ProduitsAdminPage() {
 
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
-
-  const API_BASE_URL = api.defaults.baseURL;
 
   const fetchProducts = async (pageNumber = 1) => {
     setLoading(true);

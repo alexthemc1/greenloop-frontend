@@ -3,12 +3,11 @@ import cartAPI from "../api/cartAPI";
 import PanierBanner from "../components/Banners/PanierBanner";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { api } from "../config/api";
+import { API_BASE_URL } from "../config/api";
 
 const PanierPage = () => {
   const [cart, setCart] = useState(null);
   const [loading, setLoading] = useState(true);
-  const API_BASE_URL = api.defaults.baseURL;
   const items = cart?.items ?? [];
 
   const loadCart = () => {
