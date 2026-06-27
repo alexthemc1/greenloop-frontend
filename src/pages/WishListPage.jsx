@@ -5,7 +5,6 @@ import wishlistAPI from "../api/wishlistAPI";
 import cartAPI from "../api/cartAPI";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-import { STATIC_BASE_URL } from "../config/api";
 
 const API_BASE_URL = api.defaults.baseURL;
 
