@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
-import { api } from "../config/api";
 import WhishListBanner from "../components/Banners/WhishListBanner";
 import wishlistAPI from "../api/wishlistAPI";
 import cartAPI from "../api/cartAPI";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
-
-const API_BASE_URL = api.defaults.baseURL;
+import { STATIC_BASE_URL } from "../config/api";
 
 const WhishListPage = () => {
   const [wishlist, setWishlist] = useState([]);
@@ -63,7 +61,6 @@ const WhishListPage = () => {
 
           <div className="flex flex-col gap-5 flex-1">
 
-            {/* HEADER DESKTOP */}
             <div className="hidden md:grid grid-cols-[3fr_1fr_1fr_1fr_1fr_1fr] gap-4 p-4 bg-amber-300 rounded-xl font-bold">
               <p>Produit</p>
               <p>Prix</p>
@@ -73,7 +70,7 @@ const WhishListPage = () => {
               <p></p>
             </div>
 
-            {/* DESKTOP */}
+            {/* version ordinateur */}
             {wishlist.map(item => {
               const product = item.product;
 
@@ -94,7 +91,7 @@ const WhishListPage = () => {
                   <div className="flex gap-3 items-center">
                     <div className="w-20 h-20 rounded-md overflow-hidden bg-gray-100">
                       <img
-                        src={`${API_BASE_URL}${product.images?.[0]?.imagePath}`}
+                        src={`${STATIC_BASE_URL}${product.images?.[0]?.imagePath}`}
                         alt={product.name}
                       />
                     </div>
@@ -181,7 +178,7 @@ const WhishListPage = () => {
               );
             })}
 
-            {/* MOBILE */}
+            {/* version mobile */}
             {wishlist.map(item => {
               const product = item.product;
 
@@ -202,16 +199,14 @@ const WhishListPage = () => {
 
               return (
                 <div key={item.id} className="md:hidden flex items-center flex-col bg-white rounded-xl shadow-md p-4 gap-3 relative">
-                  {/* IMAGE */}
                   <div className="w-50 h-50 overflow-hidden rounded-md bg-gray-100">
                     <img
-                      src={`${API_BASE_URL}${product.images?.[0]?.imagePath}`}
+                     src={`${STATIC_BASE_URL}${product.images?.[0]?.imagePath}`}
                       alt={product.name}
                       className="object-cover w-full h-full"
                     />
                   </div>
 
-                  {/* NAME */}
                   <div className="flex-1 text-center mt-3">
                     <p className="font-bold">{product.name}</p>
                     <p className="text-green-600 font-semibold">
@@ -219,7 +214,6 @@ const WhishListPage = () => {
                     </p>
                   </div>
 
-                  {/* DELETE */}
                   <button
                     className="absolute top-2 right-2"
                     onClick={async () => {
@@ -262,7 +256,6 @@ const WhishListPage = () => {
 
                   </div>
 
-                  {/* ACTIONS */}
                   <div className="flex justify-between mt-2">
 
                     <button
