@@ -1,7 +1,8 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
-import axios from "axios";
+// import axios from "axios";
 import { toast } from "react-toastify";
+import { api } from "../../config/api";
 import { useNavigate } from "react-router-dom";
 
 export default function RegisterForm() {
@@ -20,11 +21,11 @@ export default function RegisterForm() {
 
     try {
       setLoading(true);
-      await axios.post("/api/users", form, {
-        headers: {
-          "Content-Type": "application/ld+json"
-        }
-      })
+    await api.post("/users", form, {
+  headers: {
+    "Content-Type": "application/ld+json",
+  },
+});
       await login({
         email: form.email,
         password: form.plainPassword
