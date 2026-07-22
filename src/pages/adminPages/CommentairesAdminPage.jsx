@@ -20,7 +20,6 @@ export default function CommentairesAdminPage() {
       const res = await api.get(
         `/comments?page=${pageNumber}&status=${statusFilter}`
       );
-
       setComments(res.data.data || []);
       setPages(res.data.pages || 1);
 
@@ -230,7 +229,7 @@ export default function CommentairesAdminPage() {
           {/* statut */}
           <div>
             <span
-              className={`px-3 py-1 rounded-full text-xs font-bold text-white ${comment.status === "approuvé"
+              className={`px-3 py-2 rounded-full text-xs font-bold text-white ${comment.status === "approuvé"
                 ? "bg-green-600" : comment.status === "en attente" ? "bg-orange-500" : "bg-red-600"
                 }`}
             >

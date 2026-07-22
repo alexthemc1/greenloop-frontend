@@ -10,6 +10,19 @@ const PanierPage = () => {
   const [loading, setLoading] = useState(true);
   const items = cart?.items ?? [];
 
+  const ImageNotFound = "/ImageNotFound.webp";
+
+  const getProductImage = (product) => {
+    const mainImage =
+      product.images?.find(
+        (image) => image.typeImage === "main"
+      ) || product.images?.[0];
+
+    return mainImage?.imagePath
+      ? `${API_BASE_URL}${mainImage.imagePath}`
+      : ImageNotFound;
+  };
+
   const loadCart = () => {
     cartAPI.getCart()
       .then(res => {
@@ -104,8 +117,11 @@ const PanierPage = () => {
                   <div className="flex gap-3 items-center">
                     <div className="w-20 h-20 rounded-md overflow-hidden bg-gray-100">
                       <img
-                        src={`${API_BASE_URL}${product.images?.[0]?.imagePath}`}
+                        src={getProductImage(product)}
                         alt={product.name}
+                        onError={(e) => {
+                          e.currentTarget.src = ImageNotFound;
+                        }}
                       />
                     </div>
 
@@ -218,8 +234,11 @@ const PanierPage = () => {
 
                   <div className="w-50 h-50 rounded-md overflow-hidden bg-gray-100">
                     <img
-                      src={`${API_BASE_URL}${product.images?.[0]?.imagePath}`}
+                      src={getProductImage(product)}
                       alt={product.name}
+                      onError={(e) => {
+                        e.currentTarget.src = ImageNotFound;
+                      }}
                     />
                   </div>
 
@@ -268,7 +287,16 @@ const PanierPage = () => {
                         <button onClick={() => cartAPI.updateItem(item.id, item.quantity + 1).then(loadCart)}>+</button>
                       </div>
                     </div>
-
+                    <LigneInfos label="Réduction">
+                      {isPromo ? (
+                        <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm">
+                          -{product.discountPercent}%
+                        </span>
+                      ) : (
+                        "-"
+                      )}
+                    </LigneInfos>
+                    
                     <LigneInfos label="Sous-total">
                       <div className="flex flex-col items-end leading-tight">
                         <span className="font-semibold">

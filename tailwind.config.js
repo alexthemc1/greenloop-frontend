@@ -15,12 +15,15 @@ export default {
         md: "var(--radius-md)",
         lg: "var(--radius-lg)",
       },
-       fontFamily: {
+      screens: {
+        xs: "300px"
+      },
+      fontFamily: {
         sans: ["Roboto", "sans-serif"],
         title: ["'Sansita Swashed'", "cursive"],
       },
     },
   },
-  
+
   plugins: [],
 }

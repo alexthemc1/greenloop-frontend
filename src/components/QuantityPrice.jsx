@@ -1,11 +1,13 @@
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import wishlistAPI from "../api/wishlistAPI";
 import { toast } from "react-toastify";
 
+
 export default function QuantityPrice({ productId, finalPrice, price, isPromo, stock = Infinity, weight, onAddToCart }) {
   const [quantity, setQuantity] = useState(1);
+  const [isInWishlist, setIsInWishlist] = useState(false);
   const navigate = useNavigate();
   const { isAuthenticated } = useContext(AuthContext);
 
@@ -17,21 +19,46 @@ export default function QuantityPrice({ productId, finalPrice, price, isPromo, s
   //calcule du prix au kilo
   const pricePerKg = weight ? finalPrice / weight : 0;
 
+  useEffect(() => {
+    if (!isAuthenticated) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setIsInWishlist(false);
+      return;
+    }
+
+    const loadWishlist = async () => {
+      try {
+        const { data } = await wishlistAPI.getWishlist();
+
+        setIsInWishlist(
+          data.some((item) => item.product.id === productId)
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    };
+
+    loadWishlist();
+  }, [productId, isAuthenticated]);
+
   const handleWishlist = async () => {
     if (!isAuthenticated) {
       navigate("/login");
       return;
     }
 
+    if (isInWishlist) {
+      toast.info("Ce produit est déjà dans votre liste de souhaits.");
+      return;
+    }
+
     try {
       await wishlistAPI.add(productId);
+
+      setIsInWishlist(true);
+
       toast.success("Ajouté à la liste de souhaits ❤️");
     } catch (err) {
-      if (err.response?.status === 409) {
-        toast.info("Déjà dans la liste de souhaits");
-        return;
-      }
-
       if (err.response?.status === 401) {
         navigate("/login");
         return;
@@ -72,7 +99,14 @@ export default function QuantityPrice({ productId, finalPrice, price, isPromo, s
           className="shrink-0 text-2xl hover:scale-110 transition"
           title="Ajouter à la wishlist"
         >
-        <img src="/icons/heart-solid-full.svg" className="w-8" />
+          <img
+            src={
+              isInWishlist
+                ? "/icons/heart-circle-check-solid-full.svg"
+                : "/icons/heart-circle-plus-solid-full.svg"
+            }
+            className="w-8"
+          />
         </button>
       </div>
     </div>

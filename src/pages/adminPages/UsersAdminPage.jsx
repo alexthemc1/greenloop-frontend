@@ -133,7 +133,7 @@ export default function UsersAdminPage() {
         <p>Avatar</p>
         <p>Nom</p>
         <p>Email</p>
-        <p>Rôle</p>
+        <p className="text-center">Rôle</p>
         <p>Date de création</p>
         <p>Actions</p>
       </div>
@@ -174,13 +174,13 @@ export default function UsersAdminPage() {
             </p>
 
             {/* le role de l'utilisateur */}
-            <div>
+            <div className="flex justify-center items-center">
               {isAdmin ? (
-                <span className="bg-red-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+                <span className="bg-red-600  text-white px-4 py-2 rounded-full text-xs font-bold">
                   ADMIN
                 </span>
               ) : (
-                <span className="bg-green-600 text-white px-3 py-1 rounded-full text-xs font-bold">
+                <span className="bg-green-600 text-white px-3 py-2 rounded-full text-xs font-bold">
                   USER
                 </span>
               )}

@@ -3,11 +3,48 @@ import { useState } from "react";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import UserMenu from "../components/UserMenu";
+import { useEffect } from "react";
+import searchAPI from "../api/searchAPI";
+import { API_BASE_URL } from "../config/api";
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const { isAuthenticated, user, logout } = useContext(AuthContext);
+  const [search, setSearch] = useState("");
+  const [results, setResults] = useState([]);
+  const [showResults, setShowResults] = useState(false);
+  const [loadingSearch, setLoadingSearch] = useState(false);
+  const ImageNotFound = "/ImageNotFound.webp";
 
+  const getImageUrl = (product) => {
+    if (!product.image) {
+      return ImageNotFound;
+    }
+    return `${API_BASE_URL}${product.image}`;
+  };
+
+  useEffect(() => {
+
+    if (search.length < 2) {
+      setResults([]);
+      setShowResults(false);
+      return;
+    }
+
+    const timer = setTimeout(async () => {
+      try {
+        setLoadingSearch(true);
+        const data = await searchAPI.searchProducts(search);
+        setResults(data);
+      } catch (error) {
+        console.error(error);
+        setResults([]);
+      } finally {
+        setLoadingSearch(false);
+      }
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [search]);
 
   return (
     <header className="bg-white shadow-md z-30">
@@ -29,7 +66,7 @@ export default function Navbar() {
               Contact
             </Link>
 
-            <Link to="/wishList" className="group flex items-center border-2 border-white rounded-md px-1 py-1">
+            <Link to="/wishList" className="group flex items-center border-2 border-white hover:border-[#FF8D8D] rounded-md px-1 py-1 hover:scale-105">
               <div className="relative w-5 h-5">
                 <img src="/icons/heart-regular-full.svg" className="absolute inset-0 w-5 group-hover:opacity-0" />
                 <img src="/icons/heart-solid-full.svg" className="absolute inset-0 w-5 opacity-0 group-hover:opacity-100" />
@@ -86,20 +123,56 @@ export default function Navbar() {
             </div>
           </div>
 
-          <div className="md:max-w-xs">
-            <form className="flex flex-col sm:flex-row gap-2 w-full md:max-w-sm">
+          <div className="md:max-w-xs relative">
+            <form onSubmit={(e) => e.preventDefault()} className="flex flex-col sm:flex-row gap-2 w-full md:max-w-sm">
               <div className="relative w-full">
                 <img
                   src="/icons/magnifying-glass-solid-full.svg"
                   className="absolute left-3 top-1/2 -translate-y-1/2 w-5"
                 />
+
                 <input
                   type="search"
+                  value={search}
+                  onChange={(e) => {
+                    setSearch(e.target.value);
+                    setShowResults(true);
+                  }}
+                  onFocus={() => setShowResults(true)}
                   placeholder="Que cherchez-vous..."
                   className="w-full pl-10 pr-3 py-2 bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600"
                 />
-              </div>
+                {showResults && results.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 mt-2 z-50 overflow-hidden rounded-md bg-white shadow-lg">
+                    {results.map((product) => (
+                      <Link
+                        key={product.id}
+                        to={`/products/${product.id}`}
+                        onClick={() => {
+                          setSearch("");
+                          setResults([]);
+                          setShowResults(false);
+                        }}
+                        className="flex items-center gap-3 p-3 hover:bg-gray-100"
+                      >
+                        <img
+                          src={getImageUrl(product)}
+                          alt={product.name}
+                          className="h-12 w-12 rounded object-cover"
+                          onError={(e) => {
+                            e.currentTarget.src = ImageNotFound;
+                          }}
+                        />
 
+                        <div>
+                          <p className="font-semibold">{product.name}</p>
+                          <p className="text-sm text-gray-500">{product.price} €</p>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </div>
               <button
                 type="submit"
                 className="sm:w-2/5 px-2 py-2 text-white hover:bg-green-600"
@@ -109,10 +182,10 @@ export default function Navbar() {
               </button>
             </form>
           </div>
-
         </nav>
       </div>
 
+      {/* VERSION MOBILE */}
       {isOpen && (
         <div className="md:hidden bg-white px-6 py-5 space-y-6 flex w-full justify-center flex-col items-center text-center">
 
@@ -129,19 +202,69 @@ export default function Navbar() {
             </div>
           </div>
           <div className="pb-4 border-b w-full border-gray-200">
-            <input type="search" placeholder="Que cherchez-vous..." className="w-full text-center px-3 py-2 bg-gray-100 rounded-md focus:outline-none focus:ring-2 focus:ring-green-600" />
+            <div className="relative w-full">
+              <input
+                type="search"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setShowResults(true);
+                }}
+                onFocus={() => setShowResults(true)}
+                placeholder="Que cherchez-vous..."
+                className="w-full text-center px-3 py-2 bg-gray-100 rounded-md"
+              />
+
+              {showResults && results.length > 0 && (
+                <div className="absolute top-full left-0 right-0 mt-2 bg-white shadow-lg rounded-md z-50">
+                  {results.map((product) => (
+                    <Link
+                      key={product.id}
+                      to={`/products/${product.id}`}
+                      onClick={() => {
+                        setSearch("");
+                        setResults([]);
+                        setShowResults(false);
+                        setIsOpen(false);
+                      }}
+                      className="flex items-center gap-3 p-3 hover:bg-gray-100"
+                    >
+                      <img
+                        src={getImageUrl(product)}
+                        alt={product.name}
+                        className="h-12 w-12 rounded object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = ImageNotFound;
+                        }}
+                      />
+                      <div className="text-start">
+                        <p>{product.name}</p>
+                        <p>{product.price} €</p>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="flex w-full items-center justify-center gap-2 px-2">
 
-            <Link to="/wishList" className="rounded-full p-2.5 flex items-center justify-center"
-              style={{ backgroundColor: "var(--color-primary)" }}>
+            <Link
+              to="/wishList"
+              onClick={() => setIsOpen(false)}
+              className="rounded-full p-2.5 flex items-center justify-center"
+              style={{ backgroundColor: "var(--color-primary)" }}
+            >
               <img src="/icons/heart-regular-full.svg" className="w-5 shrink-0" />
             </Link>
 
-
-            <Link to="/panierPage" className="rounded-full p-2.5 flex items-center justify-center"
-              style={{ backgroundColor: "var(--color-primary)" }}>
+            <Link
+              to="/panierPage"
+              onClick={() => setIsOpen(false)}
+              className="rounded-full p-2.5 flex items-center justify-center"
+              style={{ backgroundColor: "var(--color-primary)" }}
+            >
               <img src="/icons/bag-shopping-solid-full.svg" className="w-5 shrink-0" />
             </Link>
 

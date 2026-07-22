@@ -10,6 +10,21 @@ const WhishListPage = () => {
   const [wishlist, setWishlist] = useState([]);
   const [loading, setLoading] = useState(true);
 
+  const ImageNotFound = "/ImageNotFound.webp";
+
+  const getProductImage = (product) => {
+    const mainImage =
+      product.images?.find(
+        (image) => image.typeImage === "main"
+      ) || product.images?.[0];
+
+    if (!mainImage?.imagePath) {
+      return ImageNotFound;
+    }
+
+    return `${API_BASE_URL}${mainImage.imagePath}`;
+  };
+
   const loadWishlist = () => {
     wishlistAPI.getWishlist()
       .then(res => {
@@ -61,12 +76,12 @@ const WhishListPage = () => {
 
           <div className="flex flex-col gap-5 flex-1">
 
-            <div className="hidden md:grid grid-cols-[3fr_1fr_1fr_1fr_1fr_1fr] gap-4 p-4 bg-amber-300 rounded-xl font-bold">
+            <div className="hidden md:grid grid-cols-[2fr_1fr_50px_1fr_1fr_2fr] gap-4 p-4 bg-amber-300 rounded-xl font-bold">
               <p>Produit</p>
+              <p></p>
               <p>Prix</p>
               <p>Réduction</p>
               <p>Date d'ajout</p>
-              <p></p>
               <p></p>
             </div>
 
@@ -84,24 +99,33 @@ const WhishListPage = () => {
               return (
                 <div
                   key={item.id}
-                  className="hidden md:grid grid-cols-[3fr_1fr_1fr_1fr_2fr] items-center gap-4 p-4 bg-white rounded-xl shadow-md"
+                  className="hidden md:grid grid-cols-[2fr_1fr_50px_1fr_1fr_2fr] items-center gap-4 p-4 bg-white rounded-xl shadow-md"
                 >
 
                   {/* PRODUIT */}
-                  <div className="flex gap-3 items-center">
+                  <div className="flex items-center gap-4">
                     <div className="w-20 h-20 rounded-md overflow-hidden bg-gray-100">
                       <img
-                        src={`${API_BASE_URL}${product.images?.[0]?.imagePath}`}
+                        src={getProductImage(product)}
                         alt={product.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = ImageNotFound;
+                        }}
                       />
                     </div>
-
                     <div>
                       <p className="font-bold">{product.name}</p>
                       <p className="text-green-600 text-sm">
                         {product.category?.name}
                       </p>
                     </div>
+                  </div>
+
+                  <div className="flex flex-col">
+                    <Link to={`/products/${product.id}`}>
+                      <button className="btn-primary" >Voir</button>
+                    </Link>
                   </div>
 
                   {/* PRIX */}
@@ -154,7 +178,7 @@ const WhishListPage = () => {
                       <p>Ajouter au panier</p>
                       <div className="shrink-0 flex items-center justify-center w-5">
                         <img src="/icons/bag-shopping-solid-full.svg" className="h-5" />
-                      +
+                        +
                       </div>
                     </button>
 
@@ -201,9 +225,12 @@ const WhishListPage = () => {
                 <div key={item.id} className="md:hidden flex items-center flex-col bg-white rounded-xl shadow-md p-4 gap-3 relative">
                   <div className="w-50 h-50 overflow-hidden rounded-md bg-gray-100">
                     <img
-                      src={`${API_BASE_URL}${product.images?.[0]?.imagePath}`}
+                      src={getProductImage(product)}
                       alt={product.name}
                       className="object-cover w-full h-full"
+                      onError={(e) => {
+                        e.currentTarget.src = ImageNotFound;
+                      }}
                     />
                   </div>
 
@@ -245,7 +272,13 @@ const WhishListPage = () => {
                     </LigneInfos>
 
                     <LigneInfos label="Réduction">
-                      {isPromo ? `-${product.discountPercent}%` : "-"}
+                      {isPromo ? (
+                        <span className="bg-green-600 text-white px-3 py-1 rounded-full text-sm">
+                          -{product.discountPercent}%
+                        </span>
+                      ) : (
+                        "-"
+                      )}
                     </LigneInfos>
 
                     <LigneInfos label="Date d'ajout">
@@ -256,10 +289,15 @@ const WhishListPage = () => {
 
                   </div>
 
-                  <div className="flex justify-between mt-2">
+                  <div className="flex justify-between mt-2 gap-4 ">
+                    <Link to={`/products/${product.id}`}>
+                      <button className="btn-primary h-10">
+                        Voir
+                      </button>
+                    </Link>
 
                     <button
-                      className="btn-primary"
+                      className="btn-primary h-10 flex items-center gap-2"
                       onClick={async () => {
                         try {
                           await cartAPI.add(product.id, 1);
@@ -272,13 +310,14 @@ const WhishListPage = () => {
                         }
                       }}
                     >
-                      <p>Ajouter au panier</p>
-                          <div className="shrink-0 flex items-center justify-center w-5">
-                        <img src="/icons/bag-shopping-solid-full.svg" className="h-5" />
-                      +
-                      </div>
+                      <span>Ajouter au panier</span>
+                      <img
+                        src="/icons/bag-shopping-solid-full.svg"
+                        className="h-5"
+                        alt=""
+                      />
+                      <span>+</span>
                     </button>
-
                   </div>
                 </div>
               );

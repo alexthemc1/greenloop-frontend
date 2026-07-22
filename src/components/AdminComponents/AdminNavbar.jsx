@@ -26,6 +26,10 @@ export default function AdminNavabar() {
         <NavLink to="/admin/commentaires" className={linkClass}>
           Commentaires
         </NavLink>
+
+        <NavLink to="/admin/orders" className={linkClass}>
+          Commandes
+        </NavLink>
       </nav>
     </div>
   );

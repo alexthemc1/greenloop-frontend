@@ -46,7 +46,6 @@ export default function ProductPage() {
   useEffect(() => {
     productsAPI.findById(id)
       .then(data => {
-        console.log("DEBUG PRODUCT:", data);
         setProduct(data);
         setLoading(false);
       })

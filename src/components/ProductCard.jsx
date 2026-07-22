@@ -39,10 +39,6 @@ export default function ProductCard({ product }) {
     );
   });
 
-  // const ImageNotFound = `https://picsum.photos/seed/${encodeURIComponent(
-  //   product.name || "product"
-  // )}/600/400`;
-
   const ImageNotFound = '/ImageNotFound.webp'
 
 

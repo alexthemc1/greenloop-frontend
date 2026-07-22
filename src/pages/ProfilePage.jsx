@@ -1,6 +1,7 @@
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { Link } from "react-router-dom";
+import ProfileOrders from "../components/ProfileOrders";
 
 export default function ProfilePage() {
   const { user, isAdmin } = useContext(AuthContext);
@@ -19,15 +20,15 @@ export default function ProfilePage() {
         <div className="flex flex-col items-center text-center">
           <img src={user?.profileImage?.trim() ? user.profileImage : "/icons/user-regular-full.svg"} className="w-32 h-32 bg-linear-to-b from-lime-400 to-green-600 relative rounded-full border-4 border-white object-cover shadow-lg" />
 
-      
-              {isAdmin && (
-                <div className="mt-2 px-3 py-1 bg-red-100 text-red-600 text-xs font-semibold rounded-full">
-                  Administrateur
-                </div>
-              )}
-              <h1 className="mt-4 text-2xl font-bold">{user?.firstname} {user?.lastname}</h1>
-              <p className="text-gray-500">{user?.email}</p>
- 
+
+          {isAdmin && (
+            <div className="mt-2 px-3 py-1 bg-red-100 text-red-600 text-xs font-semibold rounded-full">
+              Administrateur
+            </div>
+          )}
+          <h1 className="mt-4 text-2xl font-bold">{user?.firstname} {user?.lastname}</h1>
+          <p className="text-gray-500">{user?.email}</p>
+
 
           <div className="mt-4 flex gap-3">
 
@@ -44,8 +45,8 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        <div className="mt-10 grid gap-4">
-          <div className="bg-white p-6 rounded-xl shadow">
+        <div className="mt-10 grid gap-4 grid-cols-1 md:grid-cols-2 ">
+          <div className="bg-white p-4 rounded-xl shadow">
             <h2 className="font-semibold mb-2">Informations</h2>
 
             <div className="text-gray-500">
@@ -60,7 +61,7 @@ export default function ProfilePage() {
 
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow">
+          <div className="bg-white p-4 rounded-xl shadow">
             <h2 className="font-semibold mb-2">Adresses</h2>
 
             {user?.addresses?.length > 0 ? (
@@ -88,9 +89,11 @@ export default function ProfilePage() {
             )}
           </div>
 
-          <div className="bg-white p-6 rounded-xl shadow">
-            <h2 className="font-semibold mb-2">Commandes</h2>
-            <p className="text-gray-500">Contenu à venir...</p>
+          <div className="bg-white p-4 col-span-full rounded-xl shadow">
+            <h2 className="font-semibold mb-4">
+              Commandes
+            </h2>
+            <ProfileOrders />
           </div>
         </div>
       </div>

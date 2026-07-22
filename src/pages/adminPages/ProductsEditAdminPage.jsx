@@ -65,7 +65,6 @@ export default function ProductsEditAdminPage() {
           pivot.nutritionalIcon?.["@id"] === icon["@id"]
       );
 
-    console.log(product.productNutritionalIcons);
     if (alreadySelected) {
       setProduct({
         ...product,

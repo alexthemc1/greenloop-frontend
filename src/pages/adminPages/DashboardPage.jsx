@@ -55,6 +55,10 @@ export default function DashboardPage() {
         <Link className="bg-white rounded-xl p-4 shadow hover:shadow-lg flex justify-center" to="/admin/commentaires">
           <p className="font-bold text-green-600">Commentaires</p>
         </Link>
+
+        <Link className="bg-white rounded-xl p-4 shadow hover:shadow-lg flex justify-center" to="/admin/orders">
+          <p className="font-bold text-green-600">Commandes</p>
+        </Link>
       </div>
 
       <div className="grid lg:grid-cols-2 gap-5">
