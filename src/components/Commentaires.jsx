@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import api from "../services/api";
 import authAPI from "../api/authAPI";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router-dom";
 
 export default function Commentaire({ productId }) {
   const [comments, setComments] = useState([]);
@@ -13,6 +14,8 @@ export default function Commentaire({ productId }) {
   const nbrCaracter = 300;
   const [text, setText] = useState("");
   const [lastCommentTime, setLastCommentTime] = useState(null);
+
+  const navigate = useNavigate();
 
   const canComment = () => {
     if (!lastCommentTime) return true;
@@ -30,15 +33,15 @@ export default function Commentaire({ productId }) {
     try {
       setSubmitting(true);
 
-await api.post("/comments", {
-  content: text,
-  rating,
-  product: `/api/products/${productId}`
-}, {
-  headers: {
-    "Content-Type": "application/ld+json"
-  }
-});
+      await api.post("/comments", {
+        content: text,
+        rating,
+        product: `/api/products/${productId}`
+      }, {
+        headers: {
+          "Content-Type": "application/ld+json"
+        }
+      });
 
       setText("");
       setRating(0);
@@ -188,7 +191,7 @@ await api.post("/comments", {
                   </p>
 
                   <button
-                    onClick={() => window.location.href = "/login"}
+                    onClick={() => navigate("/login")}
                     className="btn-primary"
                   >
                     Se connecter / créer un compte
