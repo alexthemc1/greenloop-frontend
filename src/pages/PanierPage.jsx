@@ -323,7 +323,7 @@ const PanierPage = () => {
                   loadCart();
                 });
               }}
-              className="text-green-600 flex justify-end"
+              className="text-green-600 flex justify-end mt-4 transition-colors hover:text-green-700 hover:underline"
             >
               Effacer le panier
             </button>

@@ -87,7 +87,7 @@ export default function QuantityPrice({ productId, finalPrice, price, isPromo, s
       </div>
       <div className="flex justify-between">
 
-        <button className="btn-primary w-fit" style={{ backgroundColor: "var(--color-primary)" }} onClick={() => onAddToCart?.(quantity)} disabled={stock <= 0}>
+        <button className="btn-primary w-fit" onClick={() => onAddToCart?.(quantity)} disabled={stock <= 0}>
           <p>Ajouter au panier</p>
           <div className="shrink-0 flex items-center justify-center w-5">
             <img src="/icons/bag-shopping-solid-full.svg" className="h-5" />

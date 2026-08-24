@@ -40,7 +40,6 @@ body {
   gap: 0.5rem;
   padding: 0.5rem 1.2rem;
   border-radius: 9999px;
-  background-color: var(--color-primary);
   color: var(--text-dark);
   font-weight: 600;
   font-size: 0.95rem;
@@ -51,11 +50,31 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
 }
 
-.btn-primary:hover {
-  background-color: var(--color-primary-hover);
-  transform: translateY(-1px);
-  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+    background-color: var(--color-primary);
+  color: #fff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: none;
+  transition: color 0.15s ease-in-out, background-color 0.15s ease-in-out,
+    border-color 0.15s ease-in-out, text-decoration-color 0.15s ease-in-out,
+    fill 0.15s ease-in-out, stroke 0.15s ease-in-out;
 }
+
+.btn-primary:hover {
+  background-color: #15803d;
+}
+
+.btn-primary:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px #16a34a, 0 0 0 4px #fff;
+}
+
 
 .btn-secondary {
   display: inline-flex;

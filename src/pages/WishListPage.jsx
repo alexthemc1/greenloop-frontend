@@ -326,7 +326,7 @@ const WhishListPage = () => {
             {/* CLEAR ALL */}
             <button
               onClick={clearWishlist}
-              className="text-green-600 flex justify-end mt-4"
+              className="text-green-600 flex justify-end mt-4 transition-colors hover:text-green-700 hover:underline"
             >
               Vider la wishlist
             </button>

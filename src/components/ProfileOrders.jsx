@@ -6,89 +6,110 @@ export default function ProfileOrders() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
 
-const statusColor = status => {
-  switch (status) {
-    case "pending":
-      return "bg-yellow-500 text-white";
-    case "shipped":
-      return "bg-blue-600 text-white";
-    case "delivered":
-      return "bg-green-600 text-white";
-    case "cancelled":
-      return "bg-red-600 text-white";
-    default:
-      return "bg-gray-300";
-  }
-};
+  const translateStatus = (status) => {
+    switch (status) {
+      case "pending":
+        return "En préparation";
+      case "shipped":
+        return "Expédiée";
+      case "delivered":
+        return "Livrée";
+      case "cancelled":
+        return "Annulée";
+      default:
+        return status;
+    }
+  };
 
-const translateStatus = status => {
-  switch (status) {
-    case "pending":
-      return "En préparation";
-    case "shipped":
-      return "Expédiée";
-    case "delivered":
-      return "Livrée";
-    case "cancelled":
-      return "Annulée";
-    default:
-      return status;
-  }
-};
+  const statusStyle = (status) => {
+    switch (status) {
+      case "pending":
+        return "bg-amber-50 text-amber-700 border border-amber-200";
+      case "shipped":
+        return "bg-blue-50 text-blue-700 border border-blue-200";
+      case "delivered":
+        return "bg-green-50 text-green-700 border border-green-200";
+      case "cancelled":
+        return "bg-red-50 text-red-700 border border-red-200";
+      default:
+        return "bg-gray-50 text-gray-600 border border-gray-200";
+    }
+  };
 
-useEffect(() => {
-
-  commandesAPI
-    .findAll({
-      page: 1,
-      itemsPerPage: 3,
-      "order[createdAt]": "desc"
-    })
-    .then(({ data }) => {
-      setOrders(data);
-    })
-    .catch(err => {
-      console.error(err);
-    })
-    .finally(() => {
-      setLoading(false);
-    });
-
-}, []);
+  useEffect(() => {
+    commandesAPI
+      .findAll({
+        page: 1,
+        itemsPerPage: 3,
+        "order[createdAt]": "desc",
+      })
+      .then(({ data }) => setOrders(data))
+      .catch((err) => console.error(err))
+      .finally(() => setLoading(false));
+  }, []);
 
   if (loading) {
-    return <p className="text-gray-500">Chargement des commandes...</p>;
+    return <p className="mt-4 text-sm text-gray-500">Chargement des commandes...</p>;
   }
 
   if (!orders.length) {
-    return <p className="text-gray-500">Vous n'avez aucune commande.</p>;
+    return (
+      <div className="mt-4 rounded-2xl border border-gray-200 bg-gray-50 p-6 text-center">
+        <p className="text-gray-500">Vous n'avez encore passé aucune commande.</p>
+        <Link to="/" className="mt-3 inline-block font-semibold text-green-600 hover:underline">
+          Découvrir nos produits →
+        </Link>
+      </div>
+    );
   }
 
   return (
-    <div className="space-y-3 mt-4 grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3">
-      {orders.map(order => (
-        <div key={order.id} className="flex items-center justify-between rounded-lg border p-2">
-          <div>
-            <p className="font-semibold">Commande n°{order.id}</p>
-            <p className="text-sm text-gray-500">
-              {new Date(order.createdAt).toLocaleDateString("fr-BE")}
-            </p>
-          </div>
+    <div className="mt-4">
+      <div className="overflow-hidden rounded-2xl border border-gray-200 bg-white">
+        {orders.map((order, index) => {
+          const totalItems = order.items?.reduce((total, item) => total + item.quantity, 0) ?? 0;
 
-          <div className="text-right">
-            <p className="font-bold text-green-600">
-              {Number(order.totalPrice).toFixed(2)} €
-            </p>
-            <span className={`rounded-full px-3 py-1 text-sm font-semibold ${statusColor(order.status)}`}>
-              {translateStatus(order.status)}
-            </span>
-          </div>
-        </div>
-      ))}
+          return (
+            <div
+              key={order.id}
+              className={`p-4 transition-colors hover:bg-gray-50 ${index !== orders.length - 1 ? "border-b border-gray-200" : ""}`}
+            >
+              <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="min-w-0">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="font-bold text-gray-900">Commande n°{order.id}</p>
+                    <span className={`rounded-full px-2.5 py-1 text-xs font-semibold ${statusStyle(order.status)}`}>
+                      {translateStatus(order.status)}
+                    </span>
+                  </div>
 
-      <Link to="/commandes" className="col-span-full block text-center font-semibold text-green-600">
-        Voir toutes mes commandes
-      </Link>
+                  <div className="mt-1 flex flex-wrap gap-x-3 text-sm text-gray-500">
+                    <span>{new Date(order.createdAt).toLocaleDateString("fr-BE")}</span>
+                    <span>•</span>
+                    <span>{totalItems} article{totalItems > 1 ? "s" : ""}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between gap-6 sm:justify-end">
+                  <p className="shrink-0 font-bold text-gray-900">{Number(order.totalPrice).toFixed(2)} €</p>
+                  <Link
+                    to={`/commandes/${order.id}`}
+                    className="btn-primary"
+                  >
+                    Voir le détail
+                  </Link>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="mt-4 text-center">
+        <Link to="/commandes" className="font-semibold text-green-600 transition-colors hover:text-green-700 hover:underline">
+          Voir toutes mes commandes →
+        </Link>
+      </div>
     </div>
   );
 }

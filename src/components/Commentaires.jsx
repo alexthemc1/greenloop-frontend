@@ -1,8 +1,8 @@
-import { useEffect, useState } from "react";
-import api from "../services/api";
-import authAPI from "../api/authAPI";
-import { toast } from "react-toastify";
+import { useEffect, useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import api from "../services/api";
+import { AuthContext } from "../context/AuthContext";
 
 export default function Commentaire({ productId }) {
   const [comments, setComments] = useState([]);
@@ -10,12 +10,16 @@ export default function Commentaire({ productId }) {
   const [loading, setLoading] = useState(true);
   const [rating, setRating] = useState(0);
   const [submitting, setSubmitting] = useState(false);
-  const isLoggedIn = authAPI.isAuthenticated();
-  const nbrCaracter = 300;
   const [text, setText] = useState("");
-  const [lastCommentTime, setLastCommentTime] = useState(null);
+  const [lastCommentTime, setLastCommentTime] = useState(() => {
+    const saved = localStorage.getItem("lastCommentTime");
+    return saved ? Number(saved) : null;
+  });
+
+  const nbrCaracter = 300;
 
   const navigate = useNavigate();
+  const { isAuthenticated } = useContext(AuthContext);
 
   const canComment = () => {
     if (!lastCommentTime) return true;
@@ -27,21 +31,36 @@ export default function Commentaire({ productId }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!text.trim()) return toast.error("Commentaire vide");
-    if (rating === 0) return toast.error("Ajoute une note");
+    if (!canComment()) {
+      return toast.error(
+        "Vous devez attendre quelques minutes avant de poster un nouveau commentaire."
+      );
+    }
+
+    if (!text.trim()) {
+      return toast.error("Commentaire vide");
+    }
+
+    if (rating === 0) {
+      return toast.error("Ajoute une note");
+    }
 
     try {
       setSubmitting(true);
 
-      await api.post("/comments", {
-        content: text,
-        rating,
-        product: `/api/products/${productId}`
-      }, {
-        headers: {
-          "Content-Type": "application/ld+json"
+      await api.post(
+        "/comments",
+        {
+          content: text,
+          rating,
+          product: `/api/products/${productId}`,
+        },
+        {
+          headers: {
+            "Content-Type": "application/ld+json",
+          },
         }
-      });
+      );
 
       setText("");
       setRating(0);
@@ -51,9 +70,12 @@ export default function Commentaire({ productId }) {
       const now = Date.now();
       localStorage.setItem("lastCommentTime", now);
       setLastCommentTime(now);
-
     } catch (err) {
-      toast.error("Erreur lors de l'envoi");
+      console.error(err);
+
+      toast.error(
+        err.response?.data?.message || "Erreur lors de l'envoi"
+      );
     } finally {
       setSubmitting(false);
     }
@@ -64,7 +86,6 @@ export default function Commentaire({ productId }) {
     const date = new Date(dateString);
 
     const diffMs = maintenant - date;
-
     const jours = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
     if (jours < 1) return "Aujourd'hui";
@@ -78,10 +99,6 @@ export default function Commentaire({ productId }) {
     return `Il y a ${semaines} semaines`;
   };
 
-  useEffect(() => {
-    const saved = localStorage.getItem("lastCommentTime");
-    if (saved) setLastCommentTime(Number(saved));
-  }, []);
 
   useEffect(() => {
     const fetchComments = async () => {
@@ -92,7 +109,9 @@ export default function Commentaire({ productId }) {
 
         const filteredComments = commentsData
           .filter((comment) => comment.status === "approuvé")
-          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+          .sort(
+            (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
+          );
 
         setComments(filteredComments);
       } catch (error) {
@@ -106,7 +125,8 @@ export default function Commentaire({ productId }) {
   }, [productId]);
 
   return (
-    <div className="flex justify-center w-full bg-white"
+    <div
+      className="flex justify-center w-full bg-white"
       style={{
         backgroundImage: "url('/motif.svg')",
         backgroundRepeat: "repeat",
@@ -114,58 +134,74 @@ export default function Commentaire({ productId }) {
       }}
     >
       <div className="w-full max-w-7xl sm:p-3 p-5 flex flex-col items-center justify-center gap-5">
-        <h2 className="font-bold text-2xl sm:text-3xl lg:text-4xl">Ils ont goûté, ils ont adoré</h2>
-        <p>Parce que le meilleur avis reste celui de ceux qui ont goûté</p>
-        <div className="flex flex-col lg:flex-row w-full gap-10">
+        <h2 className="font-bold text-2xl sm:text-3xl lg:text-4xl">
+          Ils ont goûté, ils ont adoré
+        </h2>
 
+        <p>
+          Parce que le meilleur avis reste celui de ceux qui ont goûté
+        </p>
+
+        <div className="flex flex-col lg:flex-row w-full gap-10">
           <div className="flex flex-col gap-5 w-full lg:w-1/2">
-            <h3 className="font-semibold text-xl sm:text-2xl">Commentaires récents</h3>
-            {/* zone des commentaires */}
+            <h3 className="font-semibold text-xl sm:text-2xl">
+              Commentaires récents
+            </h3>
+
             {loading ? (
               <p>Chargement des commentaires...</p>
             ) : comments.length === 0 ? (
               <p>Aucun commentaire pour le moment.</p>
             ) : (
-              comments
-                .slice(0, visibleCount)
-                .map((comment) => (
-                  <div key={comment.id} className="flex flex-col sm:flex-row gap-5 p-3 border-2 items-center bg-white border-green-600 rounded-2xl" >
+              comments.slice(0, visibleCount).map((comment) => (
+                <div
+                  key={comment.id}
+                  className="flex flex-col sm:flex-row gap-5 p-3 border-2 items-center bg-white border-green-600 rounded-2xl"
+                >
+                  <img
+                    className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover"
+                    src={
+                      comment.user?.profileImage?.trim()
+                        ? comment.user.profileImage
+                        : "/icons/user-regular-full.svg"
+                    }
+                    alt={`${comment.user?.firstname} ${comment.user?.lastname}`}
+                  />
 
-                    <img className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover"
-                      src={
-                        comment.user?.profileImage?.trim()
-                          ? comment.user.profileImage
-                          : "/icons/user-regular-full.svg"
-                      }
-                      alt={`${comment.user?.firstname} ${comment.user?.lastname}`}
-                    />
-                    <div className="flex w-full h-full justify-between flex-col">
-                      <div className="w-full flex flex-col gap-3">
-                        <div className="w-full flex flex-col items-center sm:flex-row sm:justify-between gap-2">
-                          <span className="font-bold">
-                            {comment.user?.firstname} {comment.user?.lastname}
-                          </span>
+                  <div className="flex w-full h-full justify-between flex-col">
+                    <div className="w-full flex flex-col gap-3">
+                      <div className="w-full flex flex-col items-center sm:flex-row sm:justify-between gap-2">
+                        <span className="font-bold">
+                          {comment.user?.firstname} {comment.user?.lastname}
+                        </span>
 
-                          <div className="flex gap-1">
-                            {Array.from({
-                              length: comment.rating || 0,
-                            }).map((_, index) => (
-                              <img key={index} src="/icons/star-solid-full.svg" alt="star" className="h-5" />
-                            ))}
-                          </div>
+                        <div className="flex gap-1">
+                          {Array.from({
+                            length: comment.rating || 0,
+                          }).map((_, index) => (
+                            <img
+                              key={index}
+                              src="/icons/star-solid-full.svg"
+                              alt="star"
+                              className="h-5"
+                            />
+                          ))}
                         </div>
-                        <p className="font-light text-center sm:text-start text-sm wrap-break-word">
-                          {comment.content}
-                        </p>
                       </div>
 
-                      <p className="flex justify-end text-sm text-gray-500">
-                        {date(comment.createdAt)}
+                      <p className="font-light text-center sm:text-start text-sm wrap-break-word">
+                        {comment.content}
                       </p>
                     </div>
+
+                    <p className="flex justify-end text-sm text-gray-500">
+                      {date(comment.createdAt)}
+                    </p>
                   </div>
-                ))
+                </div>
+              ))
             )}
+
             {visibleCount < comments.length && (
               <button
                 onClick={() => setVisibleCount((prev) => prev + 3)}
@@ -175,16 +211,14 @@ export default function Commentaire({ productId }) {
               </button>
             )}
           </div>
-          {/* ----------------------------------------------------------------------------------- */}
+
           <div className="flex flex-col gap-5 w-full lg:w-1/2">
             <h3 className="font-semibold text-xl sm:text-2xl">
               Ajouter un commentaire
             </h3>
 
             <div className="flex p-3 border-2 bg-white border-green-600 rounded-2xl">
-
-              {/* si l'utilisateur n'est pas connecté */}
-              {!isLoggedIn ? (
+              {!isAuthenticated ? (
                 <div className="flex flex-col gap-4 w-full items-center text-center p-6">
                   <p className="text-gray-700 font-medium">
                     Vous devez être connecté pour laisser un commentaire.
@@ -197,12 +231,11 @@ export default function Commentaire({ productId }) {
                     Se connecter / créer un compte
                   </button>
                 </div>
-
               ) : (
-
-                /* si l'utilisateur est connecté */
-                <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-6 w-full">
-                  {/*zone étoiles */}
+                <form
+                  onSubmit={handleSubmit}
+                  className="flex flex-col gap-4 p-6 w-full"
+                >
                   <div className="grid">
                     <h2 className="text-lg font-bold pb-2">
                       Votre score d'étoile :
@@ -212,9 +245,10 @@ export default function Commentaire({ productId }) {
                       {[1, 2, 3, 4, 5].map((i) => (
                         <img
                           key={i}
-                          src={i <= rating
-                            ? "/icons/star-solid-full.svg"
-                            : "/icons/star-regular-full.svg"
+                          src={
+                            i <= rating
+                              ? "/icons/star-solid-full.svg"
+                              : "/icons/star-regular-full.svg"
                           }
                           alt="star"
                           className="h-5 cursor-pointer"
@@ -224,7 +258,6 @@ export default function Commentaire({ productId }) {
                     </div>
                   </div>
 
-                  {/*zone commentaire */}
                   <div className="flex-col w-full">
                     <h2 className="text-xl font-bold pb-2">
                       Votre commentaire :
@@ -245,13 +278,15 @@ export default function Commentaire({ productId }) {
                     </p>
                   </div>
 
-                  <button type="submit" className="btn-primary">
-                    Envoyer
+                  <button
+                    type="submit"
+                    className="btn-primary disabled:opacity-50"
+                    disabled={submitting}
+                  >
+                    {submitting ? "Envoi..." : "Envoyer"}
                   </button>
-
                 </form>
               )}
-
             </div>
           </div>
         </div>

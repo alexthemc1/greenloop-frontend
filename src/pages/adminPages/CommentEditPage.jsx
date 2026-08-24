@@ -115,7 +115,7 @@ export default function CommentEditPage() {
       <div>
         <p className="font-bold mb-2">Commentaire</p>
         <textarea
-          className="w-full border p-3 rounded-lg"
+          className="w-full border p-3 rounded-lg bg-white"
           rows={5}
           value={comment.content || ""}
           onChange={(e) => setComment({ ...comment, content: e.target.value })}
@@ -128,7 +128,7 @@ export default function CommentEditPage() {
         <div>
           <p className="font-bold mb-2">Modifier le statut</p>
           <select
-            className="border p-2 rounded-lg"
+            className="border p-2 rounded-lg bg-white"
             value={comment.status || ""}
             onChange={(e) => setComment({ ...comment, status: e.target.value })}
           >
@@ -142,7 +142,7 @@ export default function CommentEditPage() {
         <div>
           <p className="font-bold mb-2">Étoiles</p>
           <select
-            className="border p-2 rounded-lg w-24"
+            className="border p-2 rounded-lg w-24 bg-white"
             value={comment.rating || ""}
             onChange={(e) =>
               setComment({ ...comment, rating: parseInt(e.target.value) })

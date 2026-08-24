@@ -52,7 +52,6 @@ export default function Accueil() {
               <Link className="hover:underline" to="/products">
                 <button
                   className="mt-6 px-6 py-3 btn-primary"
-                  style={{ backgroundColor: "var(--color-primary)" }}
                 >
                   Découvrir la boutique
                 </button>
